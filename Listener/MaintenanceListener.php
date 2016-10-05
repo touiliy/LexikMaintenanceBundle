@@ -35,12 +35,12 @@ class MaintenanceListener
     /**
      * @var null|String
      */
-    protected $path;
+    protected $paths;
 
     /**
-     * @var null|String
+     * @var null|array
      */
-    protected $host;
+    protected $hosts;
 
     /**
      * @var array|null
@@ -58,9 +58,9 @@ class MaintenanceListener
     protected $cookie;
 
     /**
-     * @var null|String
+     * @var null|array
      */
-    protected $route;
+    protected $routes;
 
     /**
      * @var array
@@ -97,12 +97,12 @@ class MaintenanceListener
      *  incoming request.
      *
      * @param DriverFactory $driverFactory The driver factory
-     * @param String $path A regex for the path
-     * @param String $host A regex for the host
+     * @param array $paths An array for the paths
+     * @param array $hosts An array for the hosts
      * @param array $ips The list of IP addresses
      * @param array $query Query arguments
      * @param array $cookie Cookies
-     * @param String $route Route name
+     * @param array $routes Route names
      * @param array $attributes Attributes
      * @param Int $http_code http status code for response
      * @param String $http_status http status message for response
@@ -110,24 +110,24 @@ class MaintenanceListener
      */
     public function __construct(
         DriverFactory $driverFactory,
-        $path = null,
-        $host = null,
+        $paths = array(),
+        $hosts = array(),
         $ips = null,
         $query = array(),
         $cookie = array(),
-        $route = null,
+        $routes = array(),
         $attributes = array(),
         $http_code = null,
         $http_status = null,
         $debug = false
     ) {
         $this->driverFactory = $driverFactory;
-        $this->path = $path;
-        $this->host = $host;
+        $this->paths = $paths;
+        $this->hosts = $hosts;
         $this->ips = $ips;
         $this->query = $query;
         $this->cookie = $cookie;
-        $this->route = $route;
+        $this->routes = $routes;
         $this->attributes = $attributes;
         $this->http_code = $http_code;
         $this->http_status = $http_status;
@@ -173,12 +173,26 @@ class MaintenanceListener
             }
         }
 
-        if (null !== $this->path && !empty($this->path) && preg_match('{'.$this->path.'}', rawurldecode($request->getPathInfo()))) {
+        /*if (null !== $this->path && !empty($this->path) && preg_match('{'.$this->path.'}', rawurldecode($request->getPathInfo()))) {
             return;
+        }*/
+        if (is_array($this->paths)) {
+            foreach ($this->paths as $key => $pattern) {
+                if (null !== $pattern && !empty($pattern) && preg_match('{'.$pattern.'}', rawurldecode($request->getPathInfo()))) {
+                    return;
+                }
+            }
         }
 
-        if (null !== $this->host && !empty($this->host) && preg_match('{'.$this->host.'}i', $request->getHost())) {
+        /*if (null !== $this->host && !empty($this->host) && preg_match('{'.$this->host.'}i', $request->getHost())) {
             return;
+        }*/
+        if (is_array($this->hosts)) {
+            foreach ($this->hosts as $key => $pattern) {
+                if (null !== $pattern && !empty($pattern) && preg_match('{'.$pattern.'}i', $request->getHost())) {
+                    return;
+                }
+            }
         }
 
         if (count($this->ips) !== 0 && $this->checkIps($request->getClientIp(), $this->ips)) {
@@ -186,8 +200,15 @@ class MaintenanceListener
         }
 
         $route = $request->get('_route');
-        if (null !== $this->route && preg_match('{'.$this->route.'}', $route)  || (true === $this->debug && '_' === $route[0])) {
+        /*if (null !== $this->route && preg_match('{'.$this->route.'}', $route)  || (true === $this->debug && '_' === $route[0])) {
             return;
+        }*/
+        if (is_array($this->routes)) {
+            foreach ($this->routes as $key => $pattern) {
+                if (null !== $pattern && preg_match('{'.$pattern.'}', $route)  || (true === $this->debug && '_' === $route[0])) {
+                    return;
+                }
+            }
         }
 
         // Get driver class defined in your configuration

@@ -20,12 +20,12 @@
             <tag name="kernel.event_listener" event="kernel.request"  method="onKernelRequest" />
             <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" />
             <argument type="service" id="lexik_maintenance.driver.factory" />
-            <argument>%lexik_maintenance.authorized.path%</argument>
-            <argument>%lexik_maintenance.authorized.host%</argument>
+            <argument>%lexik_maintenance.authorized.paths%</argument>
+            <argument>%lexik_maintenance.authorized.hosts%</argument>
             <argument>%lexik_maintenance.authorized.ips%</argument>
             <argument>%lexik_maintenance.authorized.query%</argument>
             <argument>%lexik_maintenance.authorized.cookie%</argument>
-            <argument>%lexik_maintenance.authorized.route%</argument>
+            <argument>%lexik_maintenance.authorized.routes%</argument>
             <argument>%lexik_maintenance.authorized.attributes%</argument>
             <argument>%lexik_maintenance.response.http_code%</argument>
             <argument>%lexik_maintenance.response.http_status%</argument>

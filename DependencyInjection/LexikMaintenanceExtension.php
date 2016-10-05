@@ -36,12 +36,12 @@ class LexikMaintenanceExtension extends Extension
 
         $container->setParameter('lexik_maintenance.driver', $config['driver']);
 
-        $container->setParameter('lexik_maintenance.authorized.path', $config['authorized']['path']);
-        $container->setParameter('lexik_maintenance.authorized.host', $config['authorized']['host']);
+        $container->setParameter('lexik_maintenance.authorized.paths', $config['authorized']['paths']);
+        $container->setParameter('lexik_maintenance.authorized.hosts', $config['authorized']['hosts']);
         $container->setParameter('lexik_maintenance.authorized.ips', $config['authorized']['ips']);
         $container->setParameter('lexik_maintenance.authorized.query', $config['authorized']['query']);
         $container->setParameter('lexik_maintenance.authorized.cookie', $config['authorized']['cookie']);
-        $container->setParameter('lexik_maintenance.authorized.route', $config['authorized']['route']);
+        $container->setParameter('lexik_maintenance.authorized.routes', $config['authorized']['routes']);
         $container->setParameter('lexik_maintenance.authorized.attributes', $config['authorized']['attributes']);
         $container->setParameter('lexik_maintenance.response.http_code', $config['response']['code']);
         $container->setParameter('lexik_maintenance.response.http_status', $config['response']['status']);
