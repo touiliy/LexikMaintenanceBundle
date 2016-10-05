@@ -173,9 +173,6 @@ class MaintenanceListener
             }
         }
 
-        /*if (null !== $this->path && !empty($this->path) && preg_match('{'.$this->path.'}', rawurldecode($request->getPathInfo()))) {
-            return;
-        }*/
         if (is_array($this->paths)) {
             foreach ($this->paths as $key => $pattern) {
                 if (null !== $pattern && !empty($pattern) && preg_match('{'.$pattern.'}', rawurldecode($request->getPathInfo()))) {
@@ -184,9 +181,6 @@ class MaintenanceListener
             }
         }
 
-        /*if (null !== $this->host && !empty($this->host) && preg_match('{'.$this->host.'}i', $request->getHost())) {
-            return;
-        }*/
         if (is_array($this->hosts)) {
             foreach ($this->hosts as $key => $pattern) {
                 if (null !== $pattern && !empty($pattern) && preg_match('{'.$pattern.'}i', $request->getHost())) {
@@ -200,9 +194,6 @@ class MaintenanceListener
         }
 
         $route = $request->get('_route');
-        /*if (null !== $this->route && preg_match('{'.$this->route.'}', $route)  || (true === $this->debug && '_' === $route[0])) {
-            return;
-        }*/
         if (is_array($this->routes)) {
             foreach ($this->routes as $key => $pattern) {
                 if (null !== $pattern && preg_match('{'.$pattern.'}', $route)  || (true === $this->debug && '_' === $route[0])) {
