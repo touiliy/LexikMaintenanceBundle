@@ -44,7 +44,7 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new MaintenanceListenerTestWrapper($this->factory);
         $this->assertTrue($listener->onKernelRequest($event), 'Permissive factory should approve without args');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, 'path', 'host', array('ip'), array('query'), array('cookie'), 'route');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('paths'), array('hosts'), array('ip'), array('query'), array('cookie'), array('routes'));
         $this->assertTrue($listener->onKernelRequest($event), 'Permissive factory should approve with args');
 
         $this->factory = new DriverFactory($this->getDatabaseDriver(true), $this->getTranslator(), $driverOptions);
@@ -53,7 +53,7 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new MaintenanceListenerTestWrapper($this->factory);
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without args');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, array(), array(), array(), null);
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array(), array(), array());
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without args');
     }
 
@@ -75,16 +75,16 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $this->factory = new DriverFactory($this->getDatabaseDriver(true), $this->getTranslator(), $driverOptions);
         $this->container->set('lexik_maintenance.driver.factory', $this->factory);
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null);
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array());
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without path');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(''));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny with empty path');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '/bar');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('/bar'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching path');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '/foo');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('/foo'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on matching path');
     }
 
@@ -106,19 +106,19 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $this->factory = new DriverFactory($this->getDatabaseDriver(true), $this->getTranslator(), $driverOptions);
         $this->container->set('lexik_maintenance.driver.factory', $this->factory);
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null);
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array());
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without host');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, '');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(''));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny with empty host');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, 'www.google.com');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array('www.google.com'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching host');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, 'test.com');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array('test.com'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on matching host');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '/barfoo', 'test.com');
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('/barfoo'), array('test.com'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on non-matching path and matching host');
     }
 
@@ -140,19 +140,19 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $this->factory = new DriverFactory($this->getDatabaseDriver(true), $this->getTranslator(), $driverOptions);
         $this->container->set('lexik_maintenance.driver.factory', $this->factory);
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null);
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), null);
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without ips');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, array());
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array());
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny with empty ips');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, array('8.8.4.4'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array('8.8.4.4'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching ips');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, array('127.0.0.1'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array('127.0.0.1'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on matching ips');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '/barfoo', 'google.com', array('127.0.0.1'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('/barfoo'), array('google.com'), array('127.0.0.1'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on non-matching path and host and matching ips');
     }
 
@@ -174,7 +174,7 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $this->factory = new DriverFactory($this->getDatabaseDriver(true), $this->getTranslator(), $driverOptions);
         $this->container->set('lexik_maintenance.driver.factory', $this->factory);
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, array(), array(), $debug);
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array(), array(), $debug);
 
         $info = sprintf('Should be %s route %s with when we are %s debug env',
             $expected === true ? 'allow' : 'deny',
@@ -222,25 +222,25 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $this->factory = new DriverFactory($this->getDatabaseDriver(true), $this->getTranslator(), $driverOptions);
         $this->container->set('lexik_maintenance.driver.factory', $this->factory);
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, null);
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), null);
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without query');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, array());
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array());
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny with empty query');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, array('some' => 'attribute'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array('some' => 'attribute'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching query');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, array('attribute'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array('attribute'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching query');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, array('bar' => 'baz'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array('bar' => 'baz'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on matching get query');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, array('bar' => 'baz'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array('bar' => 'baz'));
         $this->assertTrue($listener->onKernelRequest($postEvent), 'Restrictive factory should allow on matching post query');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '/barfoo', 'google.com', array('8.8.1.1'), array('bar' => 'baz'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('/barfoo'), array('google.com'), array('8.8.1.1'), array('bar' => 'baz'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on non-matching path, host and ip and matching query');
     }
 
@@ -265,19 +265,19 @@ class MaintenanceListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, null, null);
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny without cookies');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, null, array());
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array(), array());
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny with empty cookies');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, null, array('some' => 'attribute'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array(), array('some' => 'attribute'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching cookie');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, null, array('attribute'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array(), array('attribute'));
         $this->assertFalse($listener->onKernelRequest($event), 'Restrictive factory should deny on non matching cookie');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, null, null, null, null, array('bar' => 'baz'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array(), array(), array(), array(), array('bar' => 'baz'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on matching cookie');
 
-        $listener = new MaintenanceListenerTestWrapper($this->factory, '/barfoo', 'google.com', array('8.8.1.1'), array('bar' => 'baz'), array('bar' => 'baz'));
+        $listener = new MaintenanceListenerTestWrapper($this->factory, array('/barfoo'), array('google.com'), array('8.8.1.1'), array('bar' => 'baz'), array('bar' => 'baz'));
         $this->assertTrue($listener->onKernelRequest($event), 'Restrictive factory should allow on non-matching path, host, ip, query and matching cookie');
     }
 
